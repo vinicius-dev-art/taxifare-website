@@ -1,5 +1,6 @@
 import streamlit as st
-
+from datetime import date, time, datetime
+import requests
 '''
 # TaxiFareModel front
 '''
@@ -21,6 +22,19 @@ Either as with the title by just creating a string (or an f-string). Or as with 
 - dropoff latitude
 - passenger count
 '''
+# Asking for date and time
+pickup_datetime = st.datetime_input("Inform date and time")
+# Asking for pickup longitude
+pickup_longitude = st.number_input('Inform pickup longitude')
+# Asking for pickup latitude
+pickup_latitude = st.number_input('Inform pickup latitude')
+# Asking for dropoff longitude
+dropoff_longitude = st.number_input('Inform dropoff longitude')
+# Asking for dropoff latitude
+dropoff_latitude = st.number_input('Inform dropoff latitude')
+# Asking for passenger count
+#passengers_num = st.number_input('Inform the number of passengers')
+passenger_count = st.selectbox('Number of passengers', list(range(1, 11)))
 
 '''
 ## Once we have these, let's call our API in order to retrieve a prediction
@@ -29,6 +43,7 @@ See ? No need to load a `model.joblib` file in this app, we do not even need to 
 
 🤔 How could we call our API ? Off course... The `requests` package 💡
 '''
+
 
 url = 'https://taxifare.lewagon.ai/predict'
 
@@ -46,3 +61,16 @@ if url == 'https://taxifare.lewagon.ai/predict':
 
 ## Finally, we can display the prediction to the user
 '''
+
+params = {
+    "pickup_datetime": pickup_datetime,
+    "pickup_longitude": pickup_longitude,
+    "pickup_latitude": pickup_latitude,
+    "dropoff_longitude": dropoff_longitude,
+    "dropoff_latitude": dropoff_latitude,
+    "passenger_count": passenger_count
+    }
+
+response = requests.get(url, params=params)
+prediction = response.json()
+st.write('The predicted taxi fare is', prediction["fare"])
